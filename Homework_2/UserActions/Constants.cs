@@ -8,5 +8,21 @@ internal class Constants
         Write,
         FibonacciNumbers,
         Exit,
+        ADOnet,
+    }
+
+    public enum CRUD
+    {
+        Create = 1,
+        Read,
+        Update,
+        Delete
+    }
+
+    public enum DBEntities
+    {
+        Products = 1,
+        Customers,
+        Orders
     }
 }
