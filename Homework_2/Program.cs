@@ -10,13 +10,15 @@ namespace Homework_2
             IUserAction writeAction = new WriteUserAction();
             IUserAction fibonacciNumbersAction = new FibonacciNumbersUserAction();
             IUserAction exitAction = new ExitUserAction();
+            IUserAction adoNetAction = new ADOnetAction();
             
             var userActionToImplementation = new Dictionary<Constants.UserActions, IUserAction>
             {
                 {Constants.UserActions.Read, readAction},
                 {Constants.UserActions.Write, writeAction},
                 {Constants.UserActions.FibonacciNumbers, fibonacciNumbersAction},
-                {Constants.UserActions.Exit, exitAction}
+                {Constants.UserActions.Exit, exitAction},
+                {Constants.UserActions.ADOnet, adoNetAction}
             };
             
             while (true)
@@ -27,6 +29,7 @@ namespace Homework_2
                 Console.WriteLine($"{(int)Constants.UserActions.Write}. {Constants.UserActions.Write.ToString()}");
                 Console.WriteLine($"{(int)Constants.UserActions.FibonacciNumbers}. {Constants.UserActions.FibonacciNumbers.ToString()}");
                 Console.WriteLine($"{(int)Constants.UserActions.Exit}. {Constants.UserActions.Exit.ToString()}");
+                Console.WriteLine($"{(int)Constants.UserActions.ADOnet}. {Constants.UserActions.ADOnet.ToString()}");
                 Console.Write("Выберите действие: ");
                 
                 if (int.TryParse(Console.ReadLine(), out int userSelection) &&
