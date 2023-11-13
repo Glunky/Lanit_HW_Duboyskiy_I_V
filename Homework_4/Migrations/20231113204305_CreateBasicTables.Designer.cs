@@ -4,6 +4,7 @@ using Homework_4.Provider;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Homework_4.Migrations
 {
     [DbContext(typeof(PurchaseDbContext))]
-    partial class HomeworkDbModelSnapshot : ModelSnapshot
+    [Migration("20231113204305_CreateBasicTables")]
+    partial class CreateBasicTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,12 +32,10 @@ namespace Homework_4.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar");
 
@@ -62,24 +63,6 @@ namespace Homework_4.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Homework_4.DbModels.DbOrderProduct", b =>
-                {
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderId", "ProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("OrdersProducts");
-                });
-
             modelBuilder.Entity("Homework_4.DbModels.DbProduct", b =>
                 {
                     b.Property<Guid>("Id")
@@ -90,13 +73,27 @@ namespace Homework_4.Migrations
                         .HasColumnType("money");
 
                     b.Property<string>("ProductName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar");
 
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("OrdersProducts", b =>
+                {
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrdersProducts");
                 });
 
             modelBuilder.Entity("Homework_4.DbModels.DbOrder", b =>
@@ -110,38 +107,24 @@ namespace Homework_4.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Homework_4.DbModels.DbOrderProduct", b =>
+            modelBuilder.Entity("OrdersProducts", b =>
                 {
-                    b.HasOne("Homework_4.DbModels.DbOrder", "Order")
-                        .WithMany("OrderProducts")
+                    b.HasOne("Homework_4.DbModels.DbOrder", null)
+                        .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Homework_4.DbModels.DbProduct", "Product")
-                        .WithMany("OrdersProduct")
+                    b.HasOne("Homework_4.DbModels.DbProduct", null)
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Homework_4.DbModels.DbCustomer", b =>
                 {
                     b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("Homework_4.DbModels.DbOrder", b =>
-                {
-                    b.Navigation("OrderProducts");
-                });
-
-            modelBuilder.Entity("Homework_4.DbModels.DbProduct", b =>
-                {
-                    b.Navigation("OrdersProduct");
                 });
 #pragma warning restore 612, 618
         }

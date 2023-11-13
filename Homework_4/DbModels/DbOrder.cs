@@ -6,5 +6,5 @@ public class DbOrder
     public Guid CustomerId { get; set; }
     public DateTime Date { get; set; }
     public DbCustomer Customer { get; set; }
-    public List<DbOrderProduct> OrderProducts { get; set; }
+    public List<DbProduct> Products { get; set; } = new();
 }

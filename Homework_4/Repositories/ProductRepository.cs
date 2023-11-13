@@ -13,7 +13,7 @@ public class ProductRepository : Repository
 
     public async Task CreateProduct(DbProduct product)
     {
-        await DbContext.Products.AddAsync(product);
+        DbContext.Products.Add(product);
         await DbContext.SaveChangesAsync();
     }
 

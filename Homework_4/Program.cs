@@ -36,6 +36,13 @@ internal class Program
             { Constants.DbEntities.Customer, customersController.ReadAllItems },
             { Constants.DbEntities.Order, ordersController.ReadAllItems }
         };
+        
+        Dictionary<Constants.DbEntities, Func<Task>> readSingleDbEntityImplementation = new()
+        {
+            { Constants.DbEntities.Product, productsController.ReadItem },
+            { Constants.DbEntities.Customer, customersController.ReadItem },
+            { Constants.DbEntities.Order, ordersController.ReadItem }
+        };
 
         Dictionary<Constants.DbEntities, Func<Task>> updateDbEntitiesImplementation = new()
         {
@@ -55,6 +62,7 @@ internal class Program
         {
             { Constants.CRUD.Create, createDbEntitiesImplementation },
             { Constants.CRUD.Read, readDbEntitiesImplementation },
+            { Constants.CRUD.ReadSingle, readSingleDbEntityImplementation },
             { Constants.CRUD.Update, updateDbEntitiesImplementation },
             { Constants.CRUD.Delete, deleteDbEntitiesImplementation },
         };
@@ -144,21 +152,23 @@ internal class Program
                     }
                 }
             }
-
-            while (true)
+            else
             {
-                Console.WriteLine("Данные введены некорректно, попробовать ещё раз? y/n: ");
+                while (true)
+                {
+                    Console.WriteLine("Данные введены некорректно, попробовать ещё раз? y/n: ");
 
-                var inputKey = Console.ReadKey().Key;
+                    var inputKey = Console.ReadKey().Key;
                     
-                if (inputKey == ConsoleKey.Y)
-                {
-                    break;
-                }
+                    if (inputKey == ConsoleKey.Y)
+                    {
+                        break;
+                    }
                     
-                if (inputKey == ConsoleKey.N)
-                {
-                    return;
+                    if (inputKey == ConsoleKey.N)
+                    {
+                        return;
+                    }
                 }
             }
         }

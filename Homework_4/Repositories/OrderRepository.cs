@@ -12,12 +12,7 @@ public class OrderRepository : Repository
 
     public async Task CreateOrder(DbOrder order)
     {
-        await DbContext.Orders.AddAsync(order);
-    }
-
-    public async Task CreateOderProduct(DbOrderProduct orderProduct)
-    {
-        await DbContext.OrdersProducts.AddAsync(orderProduct);
+        DbContext.Orders.Add(order);
     }
 
     public async Task SaveChangesAsync()
@@ -29,8 +24,7 @@ public class OrderRepository : Repository
     {
         return await DbContext.Orders
             .Include(o=>o.Customer)
-            .Include(o => o.OrderProducts)
-            .ThenInclude(op => op.Product)
+            .Include(o => o.Products)
             .AsNoTracking()
             .ToArrayAsync();
     }

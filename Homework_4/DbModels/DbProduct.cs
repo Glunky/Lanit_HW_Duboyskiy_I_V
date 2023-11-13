@@ -5,5 +5,5 @@ public class DbProduct
     public Guid Id { get; set; }
     public string ProductName { get; set; }
     public decimal Price { get; set; }
-    public List<DbOrderProduct> OrdersProduct { get; set; }
+    public List<DbOrder> Orders { get; set; }
 }

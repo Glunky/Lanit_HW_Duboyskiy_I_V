@@ -8,9 +8,8 @@ public class PurchaseDbContext : DbContext
     public DbSet<DbCustomer> Customers { get; set; }
     public DbSet<DbProduct> Products { get; set; }
     public DbSet<DbOrder> Orders { get; set; }
-    public DbSet<DbOrderProduct> OrdersProducts { get; set; }
 
-    private const string ConnectionString = @"Server=DESKTOP-23099KB\sqlexpress;Database=HomeworkDb;Trusted_Connection=True;Encrypt=False;";
+    private const string ConnectionString = @"Server=DESKTOP-23099KB\sqlexpress;Database=PurchaseDb;Trusted_Connection=True;Encrypt=False;";
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -22,7 +21,6 @@ public class PurchaseDbContext : DbContext
         CreateCustomer(modelBuilder);
         CreateProduct(modelBuilder);
         CreateOrder(modelBuilder);
-        CreateProductsOrders(modelBuilder);
     }
 
     private void CreateCustomer(ModelBuilder modelBuilder)
@@ -41,8 +39,13 @@ public class PurchaseDbContext : DbContext
         modelBuilder.Entity<DbProduct>().Property(p => p.ProductName).HasColumnType("nvarchar").HasMaxLength(50);
         modelBuilder.Entity<DbProduct>().Property(p => p.Price).HasColumnType("money");
         modelBuilder.Entity<DbProduct>()
-            .HasMany(p => p.OrdersProduct)
-            .WithOne(op => op.Product);
+            .HasMany(p => p.Orders)
+            .WithMany(op => op.Products)
+            .UsingEntity(
+                "OrdersProducts",
+                l => l.HasOne(typeof(DbOrder)).WithMany().HasForeignKey("OrderId").HasPrincipalKey(nameof(DbOrder.Id)),
+                r => r.HasOne(typeof(DbProduct)).WithMany().HasForeignKey("ProductId").HasPrincipalKey(nameof(DbProduct.Id)),
+                j => j.HasKey("OrderId", "ProductId"));;
     }
 
     private void CreateOrder(ModelBuilder modelBuilder)
@@ -54,24 +57,7 @@ public class PurchaseDbContext : DbContext
             .HasForeignKey(o => o.CustomerId);
         modelBuilder.Entity<DbOrder>().Property(o => o.Date).HasColumnType("date");
         modelBuilder.Entity<DbOrder>()
-            .HasMany(p => p.OrderProducts)
-            .WithOne(op => op.Order);
-    }
-
-    private void CreateProductsOrders(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<DbOrderProduct>().HasKey(op=> new { op.OrderId, op.ProductId });
-        
-        modelBuilder.Entity<DbOrderProduct>()
-            .HasOne(op => op.Order)
-            .WithMany(o => o.OrderProducts)
-            .HasForeignKey(op => op.OrderId)
-            .OnDelete(DeleteBehavior.Cascade);
-        
-        modelBuilder.Entity<DbOrderProduct>()
-            .HasOne(op => op.Product)
-            .WithMany(p => p.OrdersProduct)
-            .HasForeignKey(op => op.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasMany(p => p.Products)
+            .WithMany(op => op.Orders);
     }
 }

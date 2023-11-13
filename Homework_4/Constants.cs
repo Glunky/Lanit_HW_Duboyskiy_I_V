@@ -6,6 +6,7 @@ public class Constants
     {
         Create = 1,
         Read,
+        ReadSingle,
         Update,
         Delete
     }

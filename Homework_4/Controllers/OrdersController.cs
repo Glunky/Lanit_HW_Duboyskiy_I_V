@@ -39,6 +39,8 @@ public class OrdersController : IController
                 var selectedCustomer = customers[selectedCustomerIdx];
 
                 Guid orderId = Guid.NewGuid();
+                DbOrder order = new DbOrder { Id = orderId };
+                
                 bool isOrderCreated = false;
 
                 while (true)
@@ -58,50 +60,34 @@ public class OrdersController : IController
                     {
                         var selectedProduct = products[selectedProductIdx];
 
-                        Console.Write("Введите количество товара: ");
-
-                        if (int.TryParse(Console.ReadLine(), out int productQuantity) && productQuantity > 0)
+                        if (!isOrderCreated)
                         {
-                            if (!isOrderCreated)
-                            {
-                                await _orderRepository.CreateOrder(new DbOrder()
-                                {
-                                    Id = orderId,
-                                    CustomerId = selectedCustomer.Id,
-                                    Date = date
-                                });
+                            order.CustomerId = selectedCustomer.Id;
+                            order.Date = date;
+                            
+                            await _orderRepository.CreateOrder(order);
 
-                                Console.WriteLine($"Заказ для пользователя {selectedCustomer.Id} успешно создан");
+                            Console.WriteLine($"Заказ для пользователя {selectedCustomer.Id} успешно создан");
 
-                                isOrderCreated = true;
-                            }
-
-                            await _orderRepository.CreateOderProduct(new DbOrderProduct()
-                            {
-                                OrderId = orderId,
-                                ProductId = selectedProduct.Id,
-                                Quantity = productQuantity
-                            });
-
-                            Console.WriteLine($"Продукт {selectedProduct.ProductName} добавлен в заказ");
-                            Console.WriteLine("Желаете добавить ещё продуктов в заказ? y/n");
-
-                            ConsoleKey inputKey = Console.ReadKey().Key;
-
-                            if (inputKey == ConsoleKey.Y)
-                            {
-                                continue;
-                            }
-
-                            if (inputKey == ConsoleKey.N)
-                            {
-                                await _orderRepository.SaveChangesAsync();
-                                return;
-                            }
+                            isOrderCreated = true;
                         }
-                        else
+
+                        order.Products.Add(selectedProduct);
+                        
+                        Console.WriteLine($"Продукт {selectedProduct.ProductName} добавлен в заказ");
+                        Console.WriteLine("Желаете добавить ещё продуктов в заказ? y/n");
+
+                        ConsoleKey inputKey = Console.ReadKey().Key;
+
+                        if (inputKey == ConsoleKey.Y)
                         {
-                            Console.WriteLine("Введены некорректные денные, попробуйте ещё раз");
+                            continue;
+                        }
+
+                        if (inputKey == ConsoleKey.N)
+                        {
+                            await _orderRepository.SaveChangesAsync();
+                            return;
                         }
                     }
                     else
@@ -137,12 +123,12 @@ public class OrdersController : IController
         {
             var order = orders[i];
             var customer = order.Customer;
-            var orderProducts = order.OrderProducts;
+            var products = order.Products;
             
             Console.WriteLine($"{i}. Пользователь {customer.FirstName} в заказе от {order.Date} №{order.Id} заказывал: ");
-            foreach (var op in orderProducts)
+            foreach (var p in products)
             {
-                Console.WriteLine($"--- {op.Product.ProductName} в количестве {op.Quantity} единиц ---");
+                Console.WriteLine($"--- {p.ProductName} ---");
             }
         }
     }

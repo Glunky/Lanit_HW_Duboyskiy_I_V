@@ -12,7 +12,7 @@ public class CustomerRepository : Repository
 
     public async Task CreateCustomer(DbCustomer customer)
     {
-        await DbContext.AddAsync(customer);
+        DbContext.Add(customer);
         await DbContext.SaveChangesAsync();
     }
 
