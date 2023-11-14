@@ -1,13 +1,15 @@
+using Homework_4._5.Requests;
 using Homework_4.DbModels;
 using Homework_4.Repositories;
+using Homework_4.Repositories.Interfaces;
 
 namespace Homework_4.Controllers;
 
 public class ProductsController : IController
 {
-    private ProductRepository _repository;
+    private IRepository<DbProduct, ProductInfo> _repository;
     
-    public ProductsController(ProductRepository repository)
+    public ProductsController(IRepository<DbProduct, ProductInfo>  repository)
     {
         _repository = repository;
     }
@@ -30,7 +32,7 @@ public class ProductsController : IController
             Console.Write("Некорректные данные, попробуйте ещё раз: ");
         }
 
-        await _repository.CreateProduct(new DbProduct()
+        await _repository.Create(new DbProduct()
         {
             ProductName = productName,
             Price = productPrice
@@ -41,7 +43,7 @@ public class ProductsController : IController
 
     public async Task ReadAllItems()
     {
-        foreach (var product in await _repository.ReadAllProducts())
+        foreach (var product in await _repository.ReadAll())
         {
             Console.WriteLine($"--- ProductName={product.ProductName}, Price={product.Price} ---");
         }
@@ -53,7 +55,7 @@ public class ProductsController : IController
         
         if (Guid.TryParse(Console.ReadLine(), out Guid customerId))
         {
-            var product = await _repository.ReadProduct(customerId);
+            var product = await _repository.Read(customerId);
 
             Console.WriteLine(product != null ? $"--- ProductName={product.ProductName}, Price={product.Price} ---" : "Такого продукта не существует");
         }
@@ -65,7 +67,7 @@ public class ProductsController : IController
     {
         while (true)
         {
-            var products = await _repository.ReadAllProducts();
+            var products = await _repository.ReadAll();
 
             for (int i = 0; i < products.Length; i++)
             {
@@ -95,7 +97,11 @@ public class ProductsController : IController
                     Console.Write("Некорректные данные, попробуйте ещё раз: ");
                 }
 
-                await _repository.UpdateProduct(selectedProduct, productName, productPrice);
+                await _repository.Update(selectedProduct, new ProductInfo
+                {
+                    ProductName = productName,
+                    Price = productPrice
+                });
 
                 Console.WriteLine($"Продукт успешно изменён");
 
@@ -108,7 +114,7 @@ public class ProductsController : IController
 
     public async Task DeleteItem()
     {
-        var products = await _repository.ReadAllProducts();
+        var products = await _repository.ReadAll();
 
         while (true)
         {
@@ -124,7 +130,7 @@ public class ProductsController : IController
             if (int.TryParse(Console.ReadLine(), out int selectedProductIdx) && 
                 selectedProductIdx >= 0 && selectedProductIdx < products.Length)
             {
-                await _repository.DeleteProduct(products[selectedProductIdx]);
+                await _repository.Delete(products[selectedProductIdx]);
 
                 Console.WriteLine("продукт успешно удалён");
 

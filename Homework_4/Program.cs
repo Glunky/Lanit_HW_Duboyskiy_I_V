@@ -1,6 +1,10 @@
-﻿using Homework_4.Controllers;
+﻿using Homework_4._5.Controllers;
+using Homework_4._5.Requests;
+using Homework_4.Controllers;
+using Homework_4.DbModels;
 using Homework_4.Provider;
 using Homework_4.Repositories;
+using Homework_4.Repositories.Interfaces;
 
 namespace Homework_4;
 
@@ -9,19 +13,16 @@ internal class Program
     static async Task Main(string[] args)
     {
         await using PurchaseDbContext dbProvider = new PurchaseDbContext();
-        const string connectionString = @$"Server=DESKTOP-23099KB\sqlexpress;Database={nameof(PurchaseDbContext)};Trusted_Connection=True;Encrypt=False;";
         
         await dbProvider.Database.EnsureCreatedAsync();
 
-        CustomerRepository customerRepository = new CustomerRepository(connectionString, dbProvider);
-        ProductRepository productRepository = new ProductRepository(connectionString, dbProvider);
-        OrderRepository orderRepository = new OrderRepository(connectionString, dbProvider);
+        IRepository<DbCustomer, CustomerInfo> customerRepository = new CustomerRepository(dbProvider);
+        IRepository<DbProduct, ProductInfo> productRepository = new ProductRepository(dbProvider);
+        IRepository<DbOrder, OrderInfo> orderRepository = new OrderRepository(dbProvider);
 
-        IController productsController = new ProductsController(productRepository);
         IController customersController = new CustomersController(customerRepository);
+        IController productsController = new ProductsController(productRepository);
         IController ordersController = new OrdersController(orderRepository, customerRepository, productRepository);
-        
-        
 
         Dictionary<Constants.DbEntities, Func<Task>> createDbEntitiesImplementation = new()
         {

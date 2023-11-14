@@ -1,44 +1,51 @@
+using Homework_4._5.Requests;
 using Homework_4.DbModels;
 using Homework_4.Provider;
+using Homework_4.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Homework_4.Repositories;
 
-public class ProductRepository : Repository
+public class ProductRepository : Repository, IRepository<DbProduct, ProductInfo>
 
 {
-    public ProductRepository(string connectionString, PurchaseDbContext dbProvider) : base(connectionString, dbProvider)
+    public ProductRepository(PurchaseDbContext dbProvider) : base(dbProvider)
     {
     }
 
-    public async Task CreateProduct(DbProduct product)
+    public async Task Create(DbProduct product)
     {
         DbContext.Products.Add(product);
-        await DbContext.SaveChangesAsync();
+        await SaveChangesAsync();
     }
 
-    public async Task<DbProduct[]> ReadAllProducts()
+    public async Task<DbProduct> Read(Guid id)
+    {
+        return await DbContext.Products.FindAsync(id);
+    }
+    
+    public async Task<DbProduct[]> ReadAll()
     {
         return await DbContext.Products.ToArrayAsync();
     }
 
-    public async Task<DbProduct> ReadProduct(Guid id)
+    public async Task Update(DbProduct product, ProductInfo info)
     {
-        return await DbContext.Products.FindAsync(id);
-    }
-
-    public async Task UpdateProduct(DbProduct product, string productName, decimal productPrice)
-    {
-        product.ProductName = productName;
-        product.Price = productPrice;
+        product.ProductName = info.ProductName;
+        product.Price = info.Price;
         
-        await DbContext.SaveChangesAsync();
+        await SaveChangesAsync();
     }
 
-    public async Task DeleteProduct(DbProduct product)
+    public async Task Delete(DbProduct product)
     {
         DbContext.Products.Remove(product);
         
+        await SaveChangesAsync();
+    }
+
+    public async Task SaveChangesAsync()
+    {
         await DbContext.SaveChangesAsync();
     }
 }

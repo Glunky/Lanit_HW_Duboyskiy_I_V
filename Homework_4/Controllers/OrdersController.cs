@@ -1,18 +1,21 @@
+using Homework_4._5.Controllers;
+using Homework_4._5.Requests;
 using Homework_4.DbModels;
 using Homework_4.Repositories;
+using Homework_4.Repositories.Interfaces;
 
 namespace Homework_4.Controllers;
 
 public class OrdersController : IController
 {
-    private readonly OrderRepository _orderRepository;
-    private readonly CustomerRepository _customerRepository;
-    private readonly ProductRepository _productRepository;
+    private readonly IRepository<DbOrder, OrderInfo> _orderRepository;
+    private readonly IRepository<DbCustomer, CustomerInfo> _customerRepository;
+    private readonly IRepository<DbProduct, ProductInfo> _productRepository;
     
     public OrdersController(
-        OrderRepository orderRepository, 
-        CustomerRepository customerRepository,
-        ProductRepository productRepository)
+        IRepository<DbOrder, OrderInfo> orderRepository, 
+        IRepository<DbCustomer, CustomerInfo> customerRepository,
+        IRepository<DbProduct, ProductInfo> productRepository)
     {
         _orderRepository = orderRepository;
         _customerRepository = customerRepository;
@@ -21,7 +24,7 @@ public class OrdersController : IController
     
     public async Task CreateItem()
     {
-        var customers = await _customerRepository.ReadAllCustomers();
+        var customers = await _customerRepository.ReadAll();
         DateTime date = DateTime.Today;
 
         for (int i = 0; i < customers.Length; i++)
@@ -45,7 +48,7 @@ public class OrdersController : IController
 
                 while (true)
                 {
-                    var products = await _productRepository.ReadAllProducts();
+                    var products = await _productRepository.ReadAll();
 
                     for (int i = 0; i < products.Length; i++)
                     {
@@ -65,7 +68,7 @@ public class OrdersController : IController
                             order.CustomerId = selectedCustomer.Id;
                             order.Date = date;
                             
-                            await _orderRepository.CreateOrder(order);
+                            await _orderRepository.Create(order);
 
                             Console.WriteLine($"Заказ для пользователя {selectedCustomer.Id} успешно создан");
 
@@ -117,7 +120,7 @@ public class OrdersController : IController
 
     public async Task ReadAllItems()
     {
-        var orders = await _orderRepository.ReadAllOrders();
+        var orders = await _orderRepository.ReadAll();
 
         for (int i = 0; i < orders.Length; i++)
         {
@@ -139,7 +142,7 @@ public class OrdersController : IController
         
         if (Guid.TryParse(Console.ReadLine(), out Guid customerId))
         {
-            var order = await _orderRepository.ReadOrder(customerId);
+            var order = await _orderRepository.Read(customerId);
 
             Console.WriteLine(order != null ? $"--- Заказ № {order.Id} был совершён {order.Date} ---" : "Такого заказа не существует");
         }
@@ -149,7 +152,7 @@ public class OrdersController : IController
 
     public async Task UpdateItem()
     {
-        var orders = await _orderRepository.ReadAllOrders();
+        var orders = await _orderRepository.ReadAll();
         
         while (true)
         {
@@ -171,7 +174,10 @@ public class OrdersController : IController
 
                     if (DateTime.TryParse(Console.ReadLine(), out DateTime date))
                     {
-                        await _orderRepository.UpdateOrder(selectedOrder, date);
+                        await _orderRepository.Update(selectedOrder, new OrderInfo
+                        {
+                            Date = date
+                        });
                 
                         Console.WriteLine("Пользовательские данные успешно изменёны");
                 
@@ -187,7 +193,7 @@ public class OrdersController : IController
 
     public async Task DeleteItem()
     {
-        var orders = await _orderRepository.ReadAllOrders();
+        var orders = await _orderRepository.ReadAll();
 
         while (true)
         { 
@@ -201,7 +207,7 @@ public class OrdersController : IController
             if (int.TryParse(Console.ReadLine(), out int selectedOrderIdx) && 
                 selectedOrderIdx >= 0 && selectedOrderIdx < orders.Length)
             {
-                await _orderRepository.DeleteOrder(orders[selectedOrderIdx]);
+                await _orderRepository.Delete(orders[selectedOrderIdx]);
 
                 Console.WriteLine("Заказ успешно удалён");
 

@@ -1,13 +1,15 @@
+using Homework_4._5.Requests;
 using Homework_4.DbModels;
 using Homework_4.Repositories;
+using Homework_4.Repositories.Interfaces;
 
 namespace Homework_4.Controllers;
 
 public class CustomersController : IController
 {
-    private readonly CustomerRepository _repository;
+    private readonly IRepository<DbCustomer, CustomerInfo> _repository;
     
-    public CustomersController(CustomerRepository repository)
+    public CustomersController(IRepository<DbCustomer, CustomerInfo> repository)
     {
         _repository = repository;
     }
@@ -20,7 +22,7 @@ public class CustomersController : IController
         Console.Write("Введите фамилию покупателя: ");
         string customerLastName = Console.ReadLine();
 
-        await _repository.CreateCustomer(new DbCustomer
+        await _repository.Create(new DbCustomer
         {
             FirstName = customerFirstName,
             LastName = customerLastName
@@ -31,7 +33,7 @@ public class CustomersController : IController
 
     public async Task ReadAllItems()
     {
-        foreach (var customer in await _repository.ReadAllCustomers())
+        foreach (var customer in await _repository.ReadAll())
         {
             Console.WriteLine($"--- FirstName={customer.FirstName}, LastName={customer.LastName} ---");
         }
@@ -43,7 +45,7 @@ public class CustomersController : IController
             
         if (Guid.TryParse(Console.ReadLine(), out Guid customerId))
         {
-            var customer = await _repository.ReadCustomer(customerId);
+            var customer = await _repository.Read(customerId);
 
             Console.WriteLine(customer != null ? $"--- FirstName={customer.FirstName}, LastName={customer.LastName} ---" : "Такого пользователя не существует");
         }
@@ -53,7 +55,7 @@ public class CustomersController : IController
 
     public async Task UpdateItem()
     {
-        var customers = await _repository.ReadAllCustomers();
+        var customers = await _repository.ReadAll();
         
         while (true)
         {
@@ -75,7 +77,11 @@ public class CustomersController : IController
                 Console.Write("Введите новую фамилию покупателя: ");
                 string customerLastName = Console.ReadLine();
 
-                await _repository.UpdateCustomer(selectedCustomer, customerFirstName, customerLastName);
+                await _repository.Update(selectedCustomer, new CustomerInfo
+                {
+                    FirstName = customerFirstName,
+                    LastName = customerLastName
+                });
                 
                 Console.WriteLine("Пользовательские данные успешно изменёны");
                 
@@ -88,7 +94,7 @@ public class CustomersController : IController
 
     public async Task DeleteItem()
     {
-        var customers = await _repository.ReadAllCustomers();
+        var customers = await _repository.ReadAll();
         
         while (true)
         {
@@ -103,7 +109,7 @@ public class CustomersController : IController
             if (int.TryParse(Console.ReadLine(), out int selectedCustomerIdx) && 
                 selectedCustomerIdx >= 0 && selectedCustomerIdx < customers.Length)
             {
-                await _repository.DeleteCustomer(customers[selectedCustomerIdx]);
+                await _repository.Delete(customers[selectedCustomerIdx]);
                 
                 Console.WriteLine("Пользователь успешно удалён");
 
