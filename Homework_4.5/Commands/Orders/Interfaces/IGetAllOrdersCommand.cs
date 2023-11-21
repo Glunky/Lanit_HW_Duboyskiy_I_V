@@ -1,9 +1,8 @@
-using Homework_4._5.Controllers;
-using Homework_4._5.Responces;
+using Core.Responses.Orders;
 
 namespace Homework_4._5.Commands.Orders.Interfaces;
 
 public interface IGetAllOrdersCommand
 {
-    Task<ResultResponse<IEnumerable<OrderInfo>>> Execute();
+    Task<GetAllOrdersResponse> Execute();
 }

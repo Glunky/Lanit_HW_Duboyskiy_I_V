@@ -1,6 +1,6 @@
+using Core.Requests.Products;
 using Homework_4._5.Commands.Products.Interfaces;
 using Homework_4._5.Requests;
-using Homework_4._5.Responces;
 using Homework_4._5.Validation;
 using Homework_4.DbModels;
 using Homework_4.Repositories.Interfaces;
@@ -10,39 +10,32 @@ namespace Homework_4._5.Commands.Products;
 public class UpdateProductCommand : IUpdateProductCommand
 {
     private readonly IRepository<DbProduct, ProductInfo> _repository;
-    private readonly IValidator<ProductInfo> _validator;
-    private readonly IHttpContextAccessor _accessor;
+    private readonly IValidator<UpdateProductRequest> _validator;
 
     public UpdateProductCommand(
         IRepository<DbProduct, ProductInfo> repository,
-        IValidator<ProductInfo> validator,
-        IHttpContextAccessor accessor)
+        IValidator<UpdateProductRequest> validator)
     {
         _repository = repository;
         _validator = validator;
-        _accessor = accessor;
     }
-    public async Task<ResultResponse<bool>> Execute(ProductInfo info)
+    public async Task<bool> Execute(UpdateProductRequest info)
     {
         ValidationResult validationResult = _validator.Validate(info);
 
         if (!validationResult.IsValid)
         {
-            _accessor.HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-            
-            return new()
-            {
-                Errors = validationResult.Errors
-            };
+            return false;
         }
 
-        DbProduct product = await _repository.Read(info.Id.Value);
+        DbProduct product = await _repository.Read(info.ProductId);
 
-        await _repository.Update(product, info);
-
-        return new()
+        await _repository.Update(product, new ProductInfo()
         {
-            Body = true
-        };
+            ProductName = info.ProductName,
+            Price = info.ProductPrice
+        });
+
+        return true;
     }
 }
