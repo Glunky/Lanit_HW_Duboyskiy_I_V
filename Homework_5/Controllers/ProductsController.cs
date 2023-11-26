@@ -18,11 +18,11 @@ public class ProductsController
     }
     
     [HttpPost]
-    public ResultResponse<Guid> Create(
+    public async Task<ResultResponse<Guid>> Create(
         [FromServices] IMessagePublisher<CreateProductRequest, CreateProductResponse> messagePublisher,
         [FromBody] CreateProductRequest request)
     {
-        var result = messagePublisher.SendMessage(request);
+        var result = await messagePublisher.SendMessageAsync(request);
 
         if (result.ProductId == null)
         {
@@ -48,7 +48,7 @@ public class ProductsController
         [FromRoute] Guid id
     )
     {
-        GetProductResponse result = messagePublisher.SendMessage(new GetProductRequest { ProductId = id });
+        GetProductResponse result = await messagePublisher.SendMessageAsync(new GetProductRequest { ProductId = id });
 
         if (result == null)
         {
@@ -70,7 +70,7 @@ public class ProductsController
     public async Task<ResultResponse<GetAllProductsResponse>> Get(
         [FromServices] IMessagePublisher<GetAllProductsRequest, GetAllProductsResponse> messagePublisher)
     {
-        GetAllProductsResponse result = messagePublisher.SendMessage(new GetAllProductsRequest());
+        GetAllProductsResponse result = await messagePublisher.SendMessageAsync(new GetAllProductsRequest());
 
         if (result == null)
         {
@@ -93,7 +93,7 @@ public class ProductsController
         [FromServices] IMessagePublisher<UpdateProductRequest, UpdateProductResponse> messagePublisher,
         [FromBody] UpdateProductRequest request)
     {
-        var result = messagePublisher.SendMessage(request);
+        var result = await messagePublisher.SendMessageAsync(request);
 
         if (result == null || !result.IsUpdated)
         {
@@ -116,7 +116,7 @@ public class ProductsController
         [FromServices] IMessagePublisher<DeleteProductRequest, DeleteProductResponse> messagePublisher,
         [FromRoute] Guid id)
     {
-        var result = messagePublisher.SendMessage(new DeleteProductRequest {ProductId = id});
+        var result = await messagePublisher.SendMessageAsync(new DeleteProductRequest {ProductId = id});
 
         if (result == null)
         {

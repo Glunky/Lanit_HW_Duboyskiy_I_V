@@ -14,17 +14,15 @@ public class CreateCustomerConsumer : IConsumer<CreateCustomerRequest>
         _command = command;
     }
 
-    public Task Consume(ConsumeContext<CreateCustomerRequest> context)
+    public async Task Consume(ConsumeContext<CreateCustomerRequest> context)
     {
-        Guid? customerId = _command.Execute(context.Message).Result;
+        Guid? customerId = await _command.Execute(context.Message);
 
         CreateCustomerResponse response = new()
         {
             CustomerId = customerId,
         };
         
-        context.Respond(response);
-
-        return Task.CompletedTask;
+       await context.RespondAsync(response);
     }
 }

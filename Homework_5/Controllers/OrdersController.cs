@@ -18,11 +18,11 @@ public class OrdersController
     }
     
     [HttpPost]
-    public ResultResponse<Guid> Create(
+    public async Task<ResultResponse<Guid>> Create(
         [FromServices] IMessagePublisher<CreateOrderRequest, CreateOrderResponse> messagePublisher,
         [FromBody] CreateOrderRequest request)
     {
-        var result = messagePublisher.SendMessage(request);
+        var result = await messagePublisher.SendMessageAsync(request);
 
         if (result.OrderId == null)
         {
@@ -48,7 +48,7 @@ public class OrdersController
         [FromRoute] Guid id
         )
     {
-        GetOrderResponse result = messagePublisher.SendMessage(new GetOrderRequest { OrderId = id });
+        GetOrderResponse result = await messagePublisher.SendMessageAsync(new GetOrderRequest { OrderId = id });
 
         if (result == null)
         {
@@ -70,7 +70,7 @@ public class OrdersController
     public async Task<ResultResponse<GetAllOrdersResponse>> Get(
         [FromServices] IMessagePublisher<GetAllOrdersRequest, GetAllOrdersResponse> messagePublisher)
     {
-        GetAllOrdersResponse result = messagePublisher.SendMessage(new GetAllOrdersRequest());
+        GetAllOrdersResponse result = await messagePublisher.SendMessageAsync(new GetAllOrdersRequest());
 
         if (result == null)
         {
@@ -93,7 +93,7 @@ public class OrdersController
         [FromServices] IMessagePublisher<UpdateOrderRequest, UpdateOrderResponse> messagePublisher,
         [FromBody] UpdateOrderRequest request)
     {
-        var result = messagePublisher.SendMessage(request);
+        var result = await messagePublisher.SendMessageAsync(request);
 
         if (result == null || !result.IsUpdated)
         {
@@ -116,7 +116,7 @@ public class OrdersController
         [FromServices] IMessagePublisher<DeleteOrderRequest, DeleteOrderResponse> messagePublisher,
         [FromRoute] Guid id)
     {
-        var result = messagePublisher.SendMessage(new DeleteOrderRequest { OrderId = id});
+        var result = await messagePublisher.SendMessageAsync(new DeleteOrderRequest { OrderId = id});
 
         if (result == null)
         {

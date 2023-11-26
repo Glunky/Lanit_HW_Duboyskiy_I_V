@@ -14,8 +14,8 @@ public class DeleteOrderMessagePublisher : IMessagePublisher<DeleteOrderRequest,
         _requestClient = requestClient;
     }
 
-    public DeleteOrderResponse SendMessage(DeleteOrderRequest request)
+    public async Task<DeleteOrderResponse> SendMessageAsync(DeleteOrderRequest request)
     {
-        return _requestClient.GetResponse<DeleteOrderResponse>(request).Result.Message;
+        return (await _requestClient.GetResponse<DeleteOrderResponse>(request)).Message;
     }
 }

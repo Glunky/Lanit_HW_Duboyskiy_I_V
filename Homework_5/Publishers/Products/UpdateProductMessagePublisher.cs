@@ -14,8 +14,8 @@ public class UpdateProductMessagePublisher : IMessagePublisher<UpdateProductRequ
         _requestClient = requestClient;
     }
 
-    public UpdateProductResponse SendMessage(UpdateProductRequest request)
+    public async Task<UpdateProductResponse> SendMessageAsync(UpdateProductRequest request)
     {
-        return _requestClient.GetResponse<UpdateProductResponse>(request).Result.Message;
+        return (await _requestClient.GetResponse<UpdateProductResponse>(request)).Message;
     }
 }

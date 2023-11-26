@@ -13,10 +13,8 @@ public class GetCustomerConsumer : IConsumer<GetCustomerRequest>
         _command = command;
     }
 
-    public Task Consume(ConsumeContext<GetCustomerRequest> context)
+    public async Task Consume(ConsumeContext<GetCustomerRequest> context)
     {
-        context.Respond(_command.Execute(context.Message).Result);
-
-        return Task.CompletedTask;
+       await context.RespondAsync(await _command.Execute(context.Message));
     }
 }

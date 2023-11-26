@@ -15,15 +15,13 @@ public class DeleteCustomerConsumer : IConsumer<DeleteCustomerRequest>
         _command = command;
     }
 
-    public Task Consume(ConsumeContext<DeleteCustomerRequest> context)
+    public async Task Consume(ConsumeContext<DeleteCustomerRequest> context)
     {
         DeleteCustomerResponse response = new()
         {
-            IsDeleted = _command.Execute(context.Message).Result,
+            IsDeleted = await _command.Execute(context.Message),
         };
         
-        context.Respond(response);
-
-        return Task.CompletedTask;
+       await context.RespondAsync(response);
     }
 }

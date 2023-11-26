@@ -14,13 +14,11 @@ public class CreateProductConsumer : IConsumer<CreateProductRequest>
         _command = command;
     }
 
-    public Task Consume(ConsumeContext<CreateProductRequest> context)
+    public async Task Consume(ConsumeContext<CreateProductRequest> context)
     {
-        context.Respond(new CreateProductResponse()
+       await context.RespondAsync(new CreateProductResponse()
         {
-            ProductId = _command.Execute(context.Message).Result
+            ProductId = await _command.Execute(context.Message)
         });
-
-        return Task.CompletedTask;
     }
 }

@@ -13,8 +13,8 @@ public class UpdateCustomerMessagePublisher : IMessagePublisher<UpdateCustomerRe
     {
         _requestClient = requestClient;
     }
-    public UpdateCustomerResponse SendMessage(UpdateCustomerRequest request)
+    public async Task<UpdateCustomerResponse> SendMessageAsync(UpdateCustomerRequest request)
     {
-        return _requestClient.GetResponse<UpdateCustomerResponse>(request).Result.Message;
+        return (await _requestClient.GetResponse<UpdateCustomerResponse>(request)).Message;
     }
 }
