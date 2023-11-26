@@ -1,9 +1,8 @@
-using Homework_4._5.Requests;
-using Homework_4._5.Responces;
+using Core.Requests.Customers;
 
 namespace Homework_4._5.Commands.Customers.Interfaces;
 
 public interface ICreateCustomerCommand
 {
-    Task<ResultResponse<Guid>> Execute(CustomerInfo request);
+    Task<Guid?> Execute(CreateCustomerRequest request);
 }

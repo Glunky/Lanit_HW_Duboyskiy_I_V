@@ -1,9 +1,8 @@
-using Homework_4._5.Requests;
-using Homework_4._5.Responces;
+using Core.Requests.Products;
 
 namespace Homework_4._5.Commands.Products.Interfaces;
 
 public interface IUpdateProductCommand
 {
-    Task<ResultResponse<bool>> Execute(ProductInfo request);
+    Task<bool> Execute(UpdateProductRequest request);
 }

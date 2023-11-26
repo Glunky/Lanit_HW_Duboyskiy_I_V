@@ -1,9 +1,8 @@
-using Homework_4._5.Controllers;
-using Homework_4._5.Responces;
+using Core.Requests.Orders;
 
 namespace Homework_4._5.Commands.Orders.Interfaces;
 
 public interface IUpdateOrderCommand
 {
-    Task<ResultResponse<bool>> Execute(OrderInfo request);
+    Task<bool> Execute(UpdateOrderRequest request);
 }
