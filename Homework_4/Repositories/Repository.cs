@@ -4,12 +4,10 @@ namespace Homework_4.Repositories;
 
 public abstract class Repository
 {
-    private string ConnectionString { get; }
     protected PurchaseDbContext DbContext { get; }
 
-    protected Repository(string connectionString, PurchaseDbContext dbProvider)
+    protected Repository(PurchaseDbContext dbContext)
     {
-        ConnectionString = connectionString;
-        DbContext = dbProvider;
+        DbContext = dbContext;
     }
 }

@@ -5,11 +5,14 @@ namespace Homework_4.Provider;
 
 public class PurchaseDbContext : DbContext
 {
+    public PurchaseDbContext(){}
+    public PurchaseDbContext(DbContextOptions<PurchaseDbContext> options) : base(options)
+    { }
     public DbSet<DbCustomer> Customers { get; set; }
     public DbSet<DbProduct> Products { get; set; }
     public DbSet<DbOrder> Orders { get; set; }
 
-    private const string ConnectionString = @"Server=DESKTOP-23099KB\sqlexpress;Database=PurchaseDb;Trusted_Connection=True;Encrypt=False;";
+    public const string ConnectionString = @"Server=DESKTOP-23099KB\sqlexpress;Database=PurchaseDb;Trusted_Connection=True;Encrypt=False;";
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
