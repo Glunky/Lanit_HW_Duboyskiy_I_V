@@ -18,11 +18,11 @@ public class CustomersController
     }
     
     [HttpPost]
-    public ResultResponse<Guid> Create(
+    public async Task<ResultResponse<Guid>> Create(
         [FromServices] IMessagePublisher<CreateCustomerRequest, CreateCustomerResponse> messagePublisher,
         [FromBody] CreateCustomerRequest request)
     {
-        var result = messagePublisher.SendMessage(request);
+        var result = await messagePublisher.SendMessageAsync(request);
 
         if (result.CustomerId == null)
         {
@@ -48,7 +48,7 @@ public class CustomersController
         [FromRoute] Guid id
         )
     {
-        GetCustomerResponse result = messagePublisher.SendMessage(new GetCustomerRequest { CustomerId = id });
+        GetCustomerResponse result = await messagePublisher.SendMessageAsync(new GetCustomerRequest { CustomerId = id });
 
         if (result == null)
         {
@@ -70,7 +70,7 @@ public class CustomersController
     public async Task<ResultResponse<GetAllCustomersResponse>> Get(
         [FromServices] IMessagePublisher<GetAllCustomersRequest, GetAllCustomersResponse> messagePublisher)
     {
-        GetAllCustomersResponse result = messagePublisher.SendMessage(new GetAllCustomersRequest());
+        GetAllCustomersResponse result = await messagePublisher.SendMessageAsync(new GetAllCustomersRequest());
 
         if (result == null)
         {
@@ -93,7 +93,7 @@ public class CustomersController
         [FromServices] IMessagePublisher<UpdateCustomerRequest, UpdateCustomerResponse> messagePublisher,
         [FromBody] UpdateCustomerRequest request)
     {
-        var result = messagePublisher.SendMessage(request);
+        var result = await messagePublisher.SendMessageAsync(request);
 
         if (result == null || !result.IsUpdated)
         {
@@ -116,7 +116,7 @@ public class CustomersController
         [FromServices] IMessagePublisher<DeleteCustomerRequest, DeleteCustomerResponse> messagePublisher,
         [FromRoute] Guid id)
     {
-        var result = messagePublisher.SendMessage(new DeleteCustomerRequest {CustomerId = id});
+        var result = await messagePublisher.SendMessageAsync(new DeleteCustomerRequest {CustomerId = id});
 
         if (result == null)
         {

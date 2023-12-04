@@ -14,8 +14,8 @@ public class GetProductMessagePublisher : IMessagePublisher<GetProductRequest, G
         _requestClient = requestClient;
     }
 
-    public GetProductResponse SendMessage(GetProductRequest request)
+    public async Task<GetProductResponse> SendMessageAsync(GetProductRequest request)
     {
-        return _requestClient.GetResponse<GetProductResponse>(request).Result.Message;
+        return (await _requestClient.GetResponse<GetProductResponse>(request)).Message;
     }
 }

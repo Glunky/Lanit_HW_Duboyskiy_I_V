@@ -13,10 +13,8 @@ public class GetAllOrdersConsumer : IConsumer<GetAllOrdersRequest>
         _command = command;
     }
 
-    public Task Consume(ConsumeContext<GetAllOrdersRequest> context)
+    public async Task Consume(ConsumeContext<GetAllOrdersRequest> context)
     {
-        context.Respond(_command.Execute().Result);
-
-        return Task.CompletedTask;
+       await context.RespondAsync(await _command.Execute());
     }
 }

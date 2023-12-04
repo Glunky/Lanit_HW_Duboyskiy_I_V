@@ -2,5 +2,5 @@ namespace Homework_5.Publishers;
 
 public interface IMessagePublisher<T, U>
 {
-    U SendMessage(T request);
+    Task<U> SendMessageAsync(T request);
 }

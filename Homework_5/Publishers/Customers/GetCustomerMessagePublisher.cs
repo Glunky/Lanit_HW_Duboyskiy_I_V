@@ -14,8 +14,8 @@ public class GetCustomerMessagePublisher : IMessagePublisher<GetCustomerRequest,
         _requestClient = requestClient;
     }
 
-    public GetCustomerResponse SendMessage(GetCustomerRequest request)
+    public async Task<GetCustomerResponse> SendMessageAsync(GetCustomerRequest request)
     {
-        return _requestClient.GetResponse<GetCustomerResponse>(request).Result.Message;
+        return (await _requestClient.GetResponse<GetCustomerResponse>(request)).Message;
     }
 }

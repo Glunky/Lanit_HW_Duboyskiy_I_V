@@ -13,8 +13,8 @@ public class CreateCustomerMessagePublisher : IMessagePublisher<CreateCustomerRe
         _requestClient = requestClient;
     }
 
-    public CreateCustomerResponse SendMessage(CreateCustomerRequest request)
+    public async Task<CreateCustomerResponse> SendMessageAsync(CreateCustomerRequest request)
     {
-        return _requestClient.GetResponse<CreateCustomerResponse>(request).Result.Message;
+        return (await _requestClient.GetResponse<CreateCustomerResponse>(request)).Message;
     }
 }

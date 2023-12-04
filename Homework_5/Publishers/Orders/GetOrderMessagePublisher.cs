@@ -14,8 +14,8 @@ public class GetOrderMessagePublisher : IMessagePublisher<GetOrderRequest, GetOr
         _requestClient = requestClient;
     }
 
-    public GetOrderResponse SendMessage(GetOrderRequest request)
+    public async Task<GetOrderResponse> SendMessageAsync(GetOrderRequest request)
     {
-        return _requestClient.GetResponse<GetOrderResponse>(request).Result.Message;
+        return (await _requestClient.GetResponse<GetOrderResponse>(request)).Message;
     }
 }

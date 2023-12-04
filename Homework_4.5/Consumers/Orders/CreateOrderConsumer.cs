@@ -14,7 +14,7 @@ public class CreateOrderConsumer : IConsumer<CreateOrderRequest>
         _command = command;
     }
 
-    public Task Consume(ConsumeContext<CreateOrderRequest> context)
+    public async Task Consume(ConsumeContext<CreateOrderRequest> context)
     {
         Guid? OrderId = _command.Execute(context.Message).Result;
 
@@ -23,8 +23,6 @@ public class CreateOrderConsumer : IConsumer<CreateOrderRequest>
             OrderId = OrderId,
         };
         
-        context.Respond(response);
-
-        return Task.CompletedTask;
+       await context.RespondAsync(response);
     }
 }

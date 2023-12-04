@@ -15,13 +15,11 @@ public class UpdateOrderConsumer : IConsumer<UpdateOrderRequest>
         _command = command;
     }
 
-    public Task Consume(ConsumeContext<UpdateOrderRequest> context)
+    public async Task Consume(ConsumeContext<UpdateOrderRequest> context)
     {
-        context.Respond(new UpdateOrderResponse()
+       await context.RespondAsync(new UpdateOrderResponse()
         {
-            IsUpdated = _command.Execute(context.Message).Result
+            IsUpdated = await _command.Execute(context.Message)
         });
-
-        return Task.CompletedTask;
     }
 }
